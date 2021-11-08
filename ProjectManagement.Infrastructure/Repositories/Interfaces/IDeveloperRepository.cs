@@ -9,6 +9,6 @@ namespace ProjectManagement.Infrastructure.Repositories.Interfaces
 {
     public interface IDeveloperRepository: IGenericRepository<Developer>
     {
-        
+        Task RefreshCache();
     }
 }

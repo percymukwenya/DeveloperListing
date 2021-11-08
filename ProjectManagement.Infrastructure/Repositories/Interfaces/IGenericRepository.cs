@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectManagement.Common.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,11 +10,11 @@ namespace ProjectManagement.Infrastructure.Repositories.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<IEnumerable<T>> All();
+        Task<PagedList<T>> Find(UserParams userParams);
         Task<T> GetById(int id);
         Task<T> Add(T entity);
         Task<bool> Delete(int id);
         Task<T> Upsert(T entity);
-        Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression);
+        Task<IEnumerable<T>> All();
     }
 }

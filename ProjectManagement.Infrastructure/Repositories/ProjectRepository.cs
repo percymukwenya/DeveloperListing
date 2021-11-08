@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ProjectManagement.Common.Enums;
 using ProjectManagement.Common.Models;
 using ProjectManagement.Infrastructure.Data;
 using ProjectManagement.Infrastructure.Repositories.Interfaces;
+using ProjectManagement.Infrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace ProjectManagement.Infrastructure.Repositories
 {
     public class ProjectRepository : GenericRepository<Project>, IProjectRepository
     {
-        public ProjectRepository(ApplicationDbContext db, ILogger logger): base(db, logger)
+        public ProjectRepository(ApplicationDbContext db, ILogger logger, Func<CacheTech, ICacheService> cacheService) : base(db, logger, cacheService)
         {
 
         }

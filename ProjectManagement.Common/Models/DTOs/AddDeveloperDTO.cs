@@ -1,14 +1,13 @@
-﻿using ProjectManagement.Common.Models.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectManagement.Common.Models
+namespace ProjectManagement.Common.Models.DTOs
 {
-    public class Developer: BaseEntity
+    public class AddDeveloperDTO
     {
         [Required]
         public string FirstName { get; set; }
@@ -19,11 +18,13 @@ namespace ProjectManagement.Common.Models
         [Required]
         public string Email { get; set; }
 
+        [Required]
         public string PhoneNumber { get; set; }
+
+        [Required]
         public int YearsOfExperience { get; set; }
 
         [Required]
         public string DeveloperType { get; set; }
-        public List<Project> Projects { get; set; } = new List<Project>();        
     }
 }

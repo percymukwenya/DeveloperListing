@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using ProjectManagement.Common.Enums;
 using ProjectManagement.Infrastructure.Data;
 using ProjectManagement.Infrastructure.Repositories.Interfaces;
+using ProjectManagement.Infrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +15,17 @@ namespace ProjectManagement.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger _logger;
+        private readonly Func<CacheTech, ICacheService> _cacheService;
 
-        public UnitOfWork(ApplicationDbContext db, ILoggerFactory loggerFactory)
+        public UnitOfWork(ApplicationDbContext db, ILoggerFactory loggerFactory, Func<CacheTech, ICacheService> cacheService)
         {
             _db = db;
             _logger = loggerFactory.CreateLogger("logs");
+            _cacheService = cacheService;
         }
-        public IDeveloperRepository DeveloperRepository => new DeveloperRepository(_db, _logger);
+        public IDeveloperRepository DeveloperRepository => new DeveloperRepository(_db, _logger, _cacheService);
 
-        public IProjectRepository ProjectRepository => new ProjectRepository(_db, _logger);
+        public IProjectRepository ProjectRepository => new ProjectRepository(_db, _logger, _cacheService);
 
         public async Task<bool> Completed()
         {

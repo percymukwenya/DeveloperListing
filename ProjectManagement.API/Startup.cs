@@ -8,9 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ProjectManagement.Common.Enums;
+using ProjectManagement.Common.Mapper;
+using ProjectManagement.Infrastructure;
 using ProjectManagement.Infrastructure.Data;
 using ProjectManagement.Infrastructure.Repositories;
 using ProjectManagement.Infrastructure.Repositories.Interfaces;
+using ProjectManagement.Infrastructure.Services;
+using ProjectManagement.Infrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +36,25 @@ namespace ProjectManagement.API
         {
             services.AddDbContext<ApplicationDbContext>
                 (options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-
+            services.Configure<CacheConfiguration>(Configuration.GetSection("CacheConfiguration"));
+            services.AddAutoMapper(typeof(Mappings));
             services.AddControllers();
 
             services.AddMemoryCache();
+            services.AddScoped<MemoryCacheService>();
+            services.AddScoped<RedisCacheService>();
+            services.AddScoped<Func<CacheTech, ICacheService>>(serviceProvider => key =>
+            {
+                switch (key)
+                {
+                    case CacheTech.Memory:
+                        return serviceProvider.GetService<MemoryCacheService>();
+                    case CacheTech.Redis:
+                        return serviceProvider.GetService<RedisCacheService>();
+                    default:
+                        return serviceProvider.GetService<MemoryCacheService>();
+                }
+            });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

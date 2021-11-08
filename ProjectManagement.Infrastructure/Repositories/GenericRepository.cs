@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ProjectManagement.Common.Enums;
+using ProjectManagement.Common.Helpers;
 using ProjectManagement.Infrastructure.Data;
 using ProjectManagement.Infrastructure.Repositories.Interfaces;
+using ProjectManagement.Infrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,47 +16,28 @@ namespace ProjectManagement.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
+        protected readonly static CacheTech cacheTech = CacheTech.Memory;
+        protected readonly string cacheKey = $"{typeof(T)}";
+        protected readonly Func<CacheTech, ICacheService> _cacheService;
         protected ApplicationDbContext _db;
         internal DbSet<T> _dbSet;
         protected readonly ILogger _logger;
 
-        public GenericRepository(ApplicationDbContext db, ILogger logger)
+        public GenericRepository(ApplicationDbContext db, ILogger logger, Func<CacheTech, ICacheService> cacheService)
         {
             _db = db;
             _dbSet = db.Set<T>();
             _logger = logger;
+            _cacheService = cacheService;
         }
+
         public virtual Task<IEnumerable<T>> All()
         {
             throw new NotImplementedException();
         }
-
-        public virtual IEnumerable<T> Get(
-            Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            string includeProperties = "")
+        public virtual Task<PagedList<T>> Find(UserParams userParams)
         {
-            IQueryable<T> query = _dbSet;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            if (orderBy != null)
-            {
-                return orderBy(query).ToList();
-            }
-            else
-            {
-                return query.ToList();
-            }
+            throw new NotImplementedException();
         }
 
         public virtual async Task<T> GetById(int id)
@@ -77,9 +61,11 @@ namespace ProjectManagement.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public virtual async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression)
+        public virtual async Task RefreshCache()
         {
-            return await _dbSet.Where(expression).ToListAsync();
-        }
+            _cacheService(cacheTech).Remove(cacheKey);
+            var cachedList = await _dbSet.ToListAsync();
+            _cacheService(cacheTech).Set(cacheKey, cachedList);
+        }        
     }
 }
