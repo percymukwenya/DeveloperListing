@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,7 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProjectManagement.API.Extensions;
 using ProjectManagement.Common.Enums;
 using ProjectManagement.Common.Mapper;
 using ProjectManagement.Infrastructure;
@@ -19,6 +22,7 @@ using ProjectManagement.Infrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ProjectManagement.API
@@ -34,29 +38,24 @@ namespace ProjectManagement.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>
-                (options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            services.Configure<CacheConfiguration>(Configuration.GetSection("CacheConfiguration"));
+            services.AddApplicationServices(Configuration);
             services.AddAutoMapper(typeof(Mappings));
             services.AddControllers();
+            services.AddCors();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"])),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
 
             services.AddMemoryCache();
-            services.AddScoped<MemoryCacheService>();
-            services.AddScoped<RedisCacheService>();
-            services.AddScoped<Func<CacheTech, ICacheService>>(serviceProvider => key =>
-            {
-                switch (key)
-                {
-                    case CacheTech.Memory:
-                        return serviceProvider.GetService<MemoryCacheService>();
-                    case CacheTech.Redis:
-                        return serviceProvider.GetService<RedisCacheService>();
-                    default:
-                        return serviceProvider.GetService<MemoryCacheService>();
-                }
-            });
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
 
             services.AddSwaggerGen(c =>
             {
@@ -77,7 +76,8 @@ namespace ProjectManagement.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

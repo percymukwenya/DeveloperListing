@@ -16,6 +16,7 @@ namespace ProjectManagement.Common.Mapper
             CreateMap<Developer, DeveloperDTO>().ReverseMap();
             CreateMap<Developer, AddDeveloperDTO>().ReverseMap();
             CreateMap<Project, ProjectDTO>().ReverseMap();
+            CreateMap<AppUser, UserDTO>().ReverseMap();
         }
     }
 }

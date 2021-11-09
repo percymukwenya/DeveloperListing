@@ -17,6 +17,7 @@ namespace ProjectManagement.Infrastructure.Data
 
         public DbSet<Developer> Developers { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

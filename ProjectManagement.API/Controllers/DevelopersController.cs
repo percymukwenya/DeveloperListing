@@ -73,7 +73,7 @@ namespace ProjectManagement.API.Controllers
         }
 
         [HttpPost("add-developer")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> AddDeveloper([FromBody] AddDeveloperDTO developerDTO)
         {
             if (developerDTO == null)
@@ -98,6 +98,7 @@ namespace ProjectManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDeveloper(int id)
         {
             var dev = await _unitOfWork.DeveloperRepository.GetById(id);
