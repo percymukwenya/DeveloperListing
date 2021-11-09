@@ -23,6 +23,11 @@ namespace ProjectManagement.API.Controllers
             _tokenService = tokenService;
         }
 
+        /// <summary>
+        /// Register new user    
+        /// </summary>
+        /// <param name="registerDTO"></param>
+        /// <returns></returns>
         [HttpPost("register")]
         public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO)
         {
@@ -37,6 +42,11 @@ namespace ProjectManagement.API.Controllers
             };
         }
 
+        /// <summary>
+        /// Login to the api and retain your token    
+        /// </summary>
+        /// <param name="loginDTO"></param>
+        /// <returns>A jwt token</returns>
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {

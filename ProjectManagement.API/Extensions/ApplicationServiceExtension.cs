@@ -21,6 +21,7 @@ namespace ProjectManagement.API.Extensions
         {
             services.AddDbContext<ApplicationDbContext>
                 (options => options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
+
             services.Configure<CacheConfiguration>(configuration.GetSection("CacheConfiguration"));
             services.AddScoped<MemoryCacheService>();
             services.AddScoped<RedisCacheService>();

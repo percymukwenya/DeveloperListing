@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProjectManagement.API</name>
+    </assembly>
+    <members>
+        <member name="M:ProjectManagement.API.Controllers.AccountController.Register(ProjectManagement.Common.Models.DTOs.RegisterDTO)">
+            <summary>
+            Register new user    
+            </summary>
+            <param name="registerDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProjectManagement.API.Controllers.AccountController.Login(ProjectManagement.Common.Models.DTOs.LoginDTO)">
+            <summary>
+            Login to the api and retain your token    
+            </summary>
+            <param name="loginDTO"></param>
+            <returns>A jwt token</returns>
+        </member>
+        <member name="M:ProjectManagement.API.Controllers.DevelopersController.GetDevelopers">
+            <summary>
+            Get List of All Developers
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ProjectManagement.API.Controllers.DevelopersController.GetByParameters(ProjectManagement.Common.Helpers.UserParams)">
+            <summary>
+            Get List of All Developers Based on parameters provided
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ProjectManagement.API.Controllers.DevelopersController.GetDeveloper(System.Int32)">
+            <summary>
+            Get individual developer based on id provided
+            </summary>
+            <param name="id">The id of the developer</param>
+            <returns></returns>
+        </member>
+        <member name="M:ProjectManagement.API.Controllers.DevelopersController.AddDeveloper(ProjectManagement.Common.Models.DTOs.AddDeveloperDTO)">
+            <summary>
+            Add new Developer if authourized    
+            </summary>
+            <param name="developerDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProjectManagement.API.Controllers.DevelopersController.DeleteDeveloper(System.Int32)">
+            <summary>
+            Delete existing Developer if authourized    
+            </summary>
+            <param name="id">The id of the developer</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

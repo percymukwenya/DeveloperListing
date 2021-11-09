@@ -27,7 +27,12 @@ namespace ProjectManagement.API.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get List of All Developers
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<DeveloperDTO>))]
         public async Task<ActionResult<IEnumerable<DeveloperDTO>>> GetDevelopers()
         {
             var devs = await _unitOfWork.DeveloperRepository.All();
@@ -42,7 +47,12 @@ namespace ProjectManagement.API.Controllers
             return Ok(objDto);
         }
 
+        /// <summary>
+        /// Get List of All Developers Based on parameters provided
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetByParameters")]
+        [ProducesResponseType(200, Type = typeof(List<DeveloperDTO>))]
         public async Task<ActionResult<IEnumerable<DeveloperDTO>>> GetByParameters([FromQuery] UserParams userParams)
         {
             var devs = await _unitOfWork.DeveloperRepository.Find(userParams);
@@ -59,7 +69,15 @@ namespace ProjectManagement.API.Controllers
             return Ok(objDto);
         }
 
+        /// <summary>
+        /// Get individual developer based on id provided
+        /// </summary>
+        /// <param name="id">The id of the developer</param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetDeveloper")]
+        [ProducesResponseType(200, Type = typeof(DeveloperDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<DeveloperDTO>> GetDeveloper(int id)
         {
             var dev = await _unitOfWork.DeveloperRepository.GetById(id);
@@ -72,7 +90,16 @@ namespace ProjectManagement.API.Controllers
             return Ok(objDto);
         }
 
+        /// <summary>
+        /// Add new Developer if authourized    
+        /// </summary>
+        /// <param name="developerDTO"></param>
+        /// <returns></returns>
         [HttpPost("add-developer")]
+        [ProducesResponseType(201, Type = typeof(Developer))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize]
         public async Task<IActionResult> AddDeveloper([FromBody] AddDeveloperDTO developerDTO)
         {
@@ -97,7 +124,16 @@ namespace ProjectManagement.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete existing Developer if authourized    
+        /// </summary>
+        /// <param name="id">The id of the developer</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize]
         public async Task<IActionResult> DeleteDeveloper(int id)
         {
